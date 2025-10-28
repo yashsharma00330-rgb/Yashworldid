@@ -3,99 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YASH WORLD – Tools</title>
+  <title>YASH WORLD TOOLS</title>
   <style>
     body {
-      font-family: 'Poppins', sans-serif;
-      text-align: center;
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
       color: white;
-      padding: 30px;
+      text-align: center;
+      padding: 40px 20px;
     }
     h1 {
-      font-size: 32px;
+      font-size: 36px;
       margin-bottom: 10px;
     }
-    h2 {
-      font-weight: normal;
-      color: #f2f2f2;
+    .tools {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 40px;
     }
-    .tool {
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 15px;
-      margin: 20px auto;
+    .card {
+      background: rgba(255,255,255,0.1);
+      border-radius: 16px;
       padding: 20px;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
-    input, button, select {
-      padding: 10px;
-      border-radius: 8px;
+    input, textarea, button {
+      margin-top: 10px;
+      padding: 8px;
       border: none;
-      margin: 5px;
-      width: 80%;
+      border-radius: 8px;
+      width: 100%;
     }
     button {
-      background: #ff9800;
-      color: white;
+      background: white;
+      color: #2a5298;
       font-weight: bold;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #ffb74d;
     }
     footer {
-      margin-top: 30px;
+      margin-top: 50px;
       font-size: 14px;
-      opacity: 0.8;
+      color: #ddd;
     }
   </style>
 </head>
 <body>
+  <h1>🚀 YASH WORLD TOOLS</h1>
+  <p>Smart tools created by <b>YASH</b></p>
 
-  <h1>🌍 YASH WORLD</h1>
-  <h2>All in One Tools by Yash</h2>
+  <div class="tools">
+    <!-- Calculator -->
+    <div class="card">
+      <h2>🧮 Calculator</h2>
+      <input type="text" id="calcInput" placeholder="Type like 12+3*4">
+      <button onclick="calculate()">Calculate</button>
+      <p id="calcResult"></p>
+    </div>
 
-  <div class="tool">
-    <h3>🧮 Calculator</h3>
-    <input type="number" id="num1" placeholder="Number 1">
-    <input type="number" id="num2" placeholder="Number 2"><br>
-    <button onclick="calc('+')">+</button>
-    <button onclick="calc('-')">-</button>
-    <button onclick="calc('*')">×</button>
-    <button onclick="calc('/')">÷</button>
-    <p id="result">Result: 0</p>
+    <!-- QR Generator -->
+    <div class="card">
+      <h2>🔲 QR Code Generator</h2>
+      <input type="text" id="qrText" placeholder="Enter text or link">
+      <button onclick="generateQR()">Generate</button>
+      <div id="qrResult" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- Word Counter -->
+    <div class="card">
+      <h2>📝 Word Counter</h2>
+      <textarea id="textCount" rows="3" placeholder="Type text here..."></textarea>
+      <button onclick="countWords()">Count</button>
+      <p id="wordResult"></p>
+    </div>
   </div>
 
-  <div class="tool">
-    <h3>🔤 Text Case Converter</h3>
-    <textarea id="textInput" rows="3" placeholder="Type something..."></textarea><br>
-    <button onclick="convertCase('upper')">UPPERCASE</button>
-    <button onclick="convertCase('lower')">lowercase</button>
-    <p id="convertedText"></p>
-  </div>
-
-  <footer>Made with ❤️ by YASH</footer>
+  <footer>© 2025 YASH WORLD | Made by <b>YASH</b></footer>
 
   <script>
-    function calc(op) {
-      const n1 = parseFloat(document.getElementById('num1').value);
-      const n2 = parseFloat(document.getElementById('num2').value);
-      let r = 0;
-      if (op === '+') r = n1 + n2;
-      if (op === '-') r = n1 - n2;
-      if (op === '*') r = n1 * n2;
-      if (op === '/') r = n1 / n2;
-      document.getElementById('result').innerText = 'Result: ' + r;
+    function calculate() {
+      try {
+        const input = document.getElementById('calcInput').value;
+        const result = eval(input);
+        document.getElementById('calcResult').innerText = "Result: " + result;
+      } catch {
+        document.getElementById('calcResult').innerText = "Invalid Expression!";
+      }
     }
 
-    function convertCase(type) {
-      const text = document.getElementById('textInput').value;
-      document.getElementById('convertedText').innerText = 
-        type === 'upper' ? text.toUpperCase() : text.toLowerCase();
+    function generateQR() {
+      const text = document.getElementById('qrText').value;
+      if (!text) return alert("Please enter text");
+      const url = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(text)}`;
+      document.getElementById('qrResult').innerHTML = `<img src="${url}" alt="QR Code">`;
+    }
+
+    function countWords() {
+      const text = document.getElementById('textCount').value.trim();
+      const count = text ? text.split(/\s+/).length : 0;
+      document.getElementById('wordResult').innerText = "Words: " + count;
     }
   </script>
-
 </body>
-  </html>
+</html>
