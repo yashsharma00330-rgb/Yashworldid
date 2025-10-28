@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YASH WORLD – Tools</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: white;
+      padding: 30px;
+    }
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    h2 {
+      font-weight: normal;
+      color: #f2f2f2;
+    }
+    .tool {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 15px;
+      margin: 20px auto;
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    input, button, select {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      margin: 5px;
+      width: 80%;
+    }
+    button {
+      background: #ff9800;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #ffb74d;
+    }
+    footer {
+      margin-top: 30px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌍 YASH WORLD</h1>
+  <h2>All in One Tools by Yash</h2>
+
+  <div class="tool">
+    <h3>🧮 Calculator</h3>
+    <input type="number" id="num1" placeholder="Number 1">
+    <input type="number" id="num2" placeholder="Number 2"><br>
+    <button onclick="calc('+')">+</button>
+    <button onclick="calc('-')">-</button>
+    <button onclick="calc('*')">×</button>
+    <button onclick="calc('/')">÷</button>
+    <p id="result">Result: 0</p>
+  </div>
+
+  <div class="tool">
+    <h3>🔤 Text Case Converter</h3>
+    <textarea id="textInput" rows="3" placeholder="Type something..."></textarea><br>
+    <button onclick="convertCase('upper')">UPPERCASE</button>
+    <button onclick="convertCase('lower')">lowercase</button>
+    <p id="convertedText"></p>
+  </div>
+
+  <footer>Made with ❤️ by YASH</footer>
+
+  <script>
+    function calc(op) {
+      const n1 = parseFloat(document.getElementById('num1').value);
+      const n2 = parseFloat(document.getElementById('num2').value);
+      let r = 0;
+      if (op === '+') r = n1 + n2;
+      if (op === '-') r = n1 - n2;
+      if (op === '*') r = n1 * n2;
+      if (op === '/') r = n1 / n2;
+      document.getElementById('result').innerText = 'Result: ' + r;
+    }
+
+    function convertCase(type) {
+      const text = document.getElementById('textInput').value;
+      document.getElementById('convertedText').innerText = 
+        type === 'upper' ? text.toUpperCase() : text.toLowerCase();
+    }
+  </script>
+
+</body>
+  </html>
