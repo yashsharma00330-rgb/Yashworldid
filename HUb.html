@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MULTI APPS — Gaming Hub</title>
+<link rel="icon" href="data:," />
+<style>
+  :root{
+    --bg:#0b0f17; --card:#0f1724; --accent:#7c4dff; --muted:#9aa4b2; --glass: rgba(255,255,255,0.03);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:Inter, system-ui, sans-serif; background:linear-gradient(180deg,#05060a 0%, #0b0f17 100%);
+    color:#e6eef8; -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+  header{
+    display:flex; align-items:center; gap:14px; padding:14px 18px; border-bottom:1px solid rgba(255,255,255,0.03);
+  }
+  .logo {
+    width:44px; height:44px; border-radius:10px; background:linear-gradient(135deg,#5b6cff,#7c4dff);
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:white;
+    box-shadow:0 6px 18px rgba(124,77,255,0.15);
+  }
+  .title {font-weight:700; font-size:18px}
+  .subtitle {font-size:12px; color:var(--muted)}
+
+  .topbar {display:flex;gap:12px; margin-left:auto; align-items:center}
+  .search {
+    background:var(--glass); border:1px solid rgba(255,255,255,0.03); padding:8px 10px; border-radius:10px; width:220px; color:inherit;
+  }
+  .iconBtn {background:transparent;border:1px solid rgba(255,255,255,0.03);padding:8px;border-radius:10px;color:var(--muted);cursor:pointer}
+
+  main{padding:18px}
+  .filters {display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap}
+  .chip{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02);cursor:pointer;color:var(--muted);font-size:13px}
+  .chip.active{background:linear-gradient(90deg,#6f4bff,#3bb7ff); color:white; border:none; box-shadow:0 6px 18px rgba(63,81,181,0.12)}
+
+  .grid {display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px}
+  .card {
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:12px; padding:12px; border:1px solid rgba(255,255,255,0.03);
+  }
+  .thumb {height:110px; border-radius:8px; background-size:cover; background-position:center; margin-bottom:10px}
+  .gameTitle{font-weight:700; font-size:16px}
+  .tags{font-size:12px;color:var(--muted); margin:8px 0}
+  .row{display:flex;gap:8px; align-items:center; justify-content:space-between}
+  .playBtn{background:linear-gradient(90deg,#16a34a,#059669); padding:8px 12px;border-radius:8px;border:none;color:white;cursor:pointer;font-weight:700}
+  .favBtn{background:transparent;border:1px solid rgba(255,255,255,0.03); padding:8px;border-radius:8px;color:var(--muted);cursor:pointer}
+
+  .empty{padding:40px;text-align:center;color:var(--muted)}
+
+  /* Modal */
+  .modal {
+    position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:60;
+    background:linear-gradient(180deg, rgba(2,6,23,0.6), rgba(2,6,23,0.85));
+  }
+  .modalInner {width:95%; max-width:900px; background:#071024; border-radius:12px; padding:12px; border:1px solid rgba(255,255,255,0.04)}
+  .modalHeader{display:flex;align-items:center;justify-content:space-between; gap:10px; margin-bottom:8px}
+  .closeBtn{background:transparent;border:1px solid rgba(255,255,255,0.05); padding:6px 10px;border-radius:8px;color:var(--muted); cursor:pointer}
+  .iframeWrap{width:100%; height:60vh; background:black; border-radius:8px; overflow:hidden}
+  iframe{width:100%; height:100%; border:0}
+
+  footer {padding:18px; text-align:center; color:var(--muted); font-size:13px}
+  @media (max-width:420px){
+    .search{width:120px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">MA</div>
+  <div>
+    <div class="title">MULTI APPS</div>
+    <div class="subtitle">Gaming Hub • Play web games & tools</div>
+  </div>
+
+  <div class="topbar">
+    <input id="q" class="search" placeholder="Search games or tools..." />
+    <button id="themeToggle" class="iconBtn">Theme</button>
+    <button id="favView" class="iconBtn">Favorites</button>
+  </div>
+</header>
+
+<main>
+  <div class="filters" id="categories"></div>
+
+  <div class="grid" id="grid"></div>
+
+  <div id="empty" class="empty" style="display:none">No games found.</div>
+</main>
+
+<!-- Modal -->
+<div id="modal" class="modal">
+  <div class="modalInner">
+    <div class="modalHeader">
+      <div><strong id="mTitle">Game</strong></div>
+      <div>
+        <button id="openNew" class="playBtn" style="background:linear-gradient(90deg,#3b82f6,#06b6d4)">Open in new</button>
+        <button id="closeModal" class="closeBtn">Close</button>
+      </div>
+    </div>
+    <div class="iframeWrap"><iframe id="gameFrame" src=""></iframe></div>
+  </div>
+</div>
+
+<footer>© <span id="year"></span> MULTI APPS — By YASH</footer>
+
+<script>
+/* ====== Demo game list - change / extend this array to add your games ===== */
+const games = [
+  { id:'g1', title:'Retro Racer', tags:['Racing','Arcade'], thumb:'https://images.unsplash.com/photo-1546489959-7baf1d2b0bda?auto=format&fit=crop&w=800&q=60', url:'https://classicreload.com/retro-racer-play-online.html' },
+  { id:'g2', title:'Tank Battle', tags:['Action','Multiplayer'], thumb:'https://images.unsplash.com/photo-1605106702876-8a5d8a1c4b03?auto=format&fit=crop&w=800&q=60', url:'https://tanktrouble.com/' },
+  { id:'g3', title:'Puzzle Blocks', tags:['Puzzle'], thumb:'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=60', url:'https://www.crazygames.com/game/1010' },
+  { id:'g4', title:'Basketball Stars', tags:['Sports'], thumb:'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=60', url:'https://www.crazygames.com/game/basketball-stars' },
+  { id:'g5', title:'Snake Classic', tags:['Arcade'], thumb:'https://images.unsplash.com/photo-1504215680853-026ed2a45def?auto=format&fit=crop&w=800&q=60', url:'https://playsnake.org/' },
+  { id:'g6', title:'Paper.io', tags:['IO','Multiplayer'], thumb:'https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf?auto=format&fit=crop&w=800&q=60', url:'https://paper-io.com/' }
+];
+/* ====================================================================== */
+
+const categoriesEl = document.getElementById('categories');
+const grid = document.getElementById('grid');
+const q = document.getElementById('q');
+const modal = document.getElementById('modal');
+const gameFrame = document.getElementById('gameFrame');
+const mTitle = document.getElementById('mTitle');
+const openNew = document.getElementById('openNew');
+const closeModal = document.getElementById('closeModal');
+const favView = document.getElementById('favView');
+
+document.getElementById('year').innerText = new Date().getFullYear();
+
+let favorites = JSON.parse(localStorage.getItem('ma_favs')||'[]');
+let activeCategory = 'All';
+let showingFavs = false;
+
+/* build categories from tags */
+const cats = ['All', ...new Set(games.flatMap(g=>g.tags))];
+cats.forEach(c=>{
+  const btn = document.createElement('button');
+  btn.className='chip'+(c==='All'?' active':'');
+  btn.innerText = c;
+  btn.onclick = ()=>{ document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active')); btn.classList.add('active'); activeCategory=c; render(); }
+  categoriesEl.appendChild(btn);
+});
+
+function render(){
+  grid.innerHTML='';
+  const term = q.value.trim().toLowerCase();
+  const list = games.filter(g=>{
+    if(showingFavs && !favorites.includes(g.id)) return false;
+    if(activeCategory!=='All' && !g.tags.includes(activeCategory)) return false;
+    if(term && !((g.title||'').toLowerCase().includes(term) || (g.tags||[]).join(' ').toLowerCase().includes(term))) return false;
+    return true;
+  });
+
+  if(list.length===0){ document.getElementById('empty').style.display='block'; } else { document.getElementById('empty').style.display='none'; }
+  list.forEach(g=>{
+    const c = document.createElement('div'); c.className='card';
+    c.innerHTML = `
+      <div class="thumb" style="background-image:url('${g.thumb}')"></div>
+      <div class="gameTitle">${g.title}</div>
+      <div class="tags">${g.tags.join(' • ')}</div>
+      <div class="row">
+        <div style="display:flex;gap:8px">
+          <button class="playBtn" data-id="${g.id}">Play</button>
+          <button class="favBtn" data-id="${g.id}">${favorites.includes(g.id)?'★':'☆'}</button>
+        </div>
+        <div style="font-size:12px;color:var(--muted)">WEB</div>
+      </div>
+    `;
+    grid.appendChild(c);
+  });
+
+  // attach listeners
+  document.querySelectorAll('.playBtn').forEach(b=>{
+    b.onclick = (e)=>{ openGame(b.getAttribute('data-id')); }
+  });
+  document.querySelectorAll('.favBtn').forEach(b=>{
+    b.onclick = (e)=>{
+      const id = b.getAttribute('data-id');
+      if(favorites.includes(id)) favorites = favorites.filter(x=>x!==id); else favorites.push(id);
+      localStorage.setItem('ma_favs', JSON.stringify(favorites));
+      render();
+    }
+  });
+}
+
+function openGame(id){
+  const g = games.find(x=>x.id===id);
+  if(!g) return alert('Game not found');
+  mTitle.innerText = g.title;
+  // show embedded page (some external sites prevent embedding; fallback open in new)
+  gameFrame.src = g.url;
+  modal.style.display='flex';
+  openNew.onclick = ()=> window.open(g.url, '_blank');
+}
+
+closeModal.onclick = ()=> { modal.style.display='none'; gameFrame.src=''; }
+modal.onclick = (e)=> { if(e.target===modal) { modal.style.display='none'; gameFrame.src=''; } }
+
+q.addEventListener('input', render);
+document.getElementById('themeToggle').addEventListener('click', ()=>{
+  // simple theme switch (invert colors)
+  if(document.documentElement.style.getPropertyValue('--bg')==='#0b0f17'){
+    // switch to light (quick)
+    document.body.style.background = '#f6f7fb';
+    document.body.style.color = '#111';
+    document.querySelectorAll('.card').forEach(c=>c.style.background='white');
+  } else { location.reload(); }
+});
+
+favView.addEventListener('click', ()=>{
+  showingFavs = !showingFavs;
+  favView.innerText = showingFavs? 'All' : 'Favorites';
+  render();
+});
+
+// initial render
+render();
+
+/* Instructions for adding games:
+   - Edit the `games` array at the top.
+   - Each game object: { id:'g7', title:'Name', tags:['Arcade'], thumb:'https://...jpg', url:'https://...' }
+   - If external site blocks iframe, Play button opens in new tab automatically using 'Open in new'.
+*/
+</script>
+</body>
+  </html>
